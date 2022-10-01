@@ -39,42 +39,37 @@ void press_esc_to_close( int delay );
 void imshow_with_text( Mat img, std::string text );
 
 int main( int argc, char** argv ) {
-    //for ( ;; )
-    //{
-        std::cout << "OPENCV HISTOGRAM\n\n"
-                  << "Demos:\n"
-                  << "1. Histogram of a RGB image.\n"
-                  << "2. Histogram equalization of a grayscale image.\n\n"
-                  << "Tasks:\n"
-                  << "3. Histogram of intensity.\n"
-                  << "4. Histogram of a video.\n"
-                  << "5. Histogram equalization of an RGB image.\n"
-                  << "6. Adaptive histogram equalization.\n"
-                  << "7. Two dimentional histograms.\n\n";
-        std::cout << "Which program would you like to run?: ";
+   std::cout << "OPENCV HISTOGRAM\n\n"
+             << "Demos:\n"
+             << "1. Histogram of a RGB image.\n"
+             << "2. Histogram equalization of a grayscale image.\n\n"
+             << "Tasks:\n"
+             << "3. Histogram of intensity.\n"
+             << "4. Histogram of a video.\n"
+             << "5. Histogram equalization of an RGB image.\n"
+             << "6. Adaptive histogram equalization.\n\n";
+   std::cout << "Which program would you like to run?: ";
 
-        switch ( std::atoi( argv[1] ) ) {
-        case 1:
-            demo1();
-            break;
-        case 2:
-            demo2();
-            break;
-        case 3:
-            task1();
-            break;
-        case 4:
-            task2();
-            break;
-        case 5:
-            task3();
-            break;
-        case 6:
-            task4();
-            break;
-        }
-//        std::cin.get();
-    //}
+   switch ( std::atoi( argv[1] ) ) {
+   case 1:
+       demo1();
+       break;
+   case 2:
+       demo2();
+       break;
+   case 3:
+       task1();
+       break;
+   case 4:
+       task2();
+       break;
+   case 5:
+       task3();
+       break;
+   case 6:
+       task4();
+       break;
+   }
 
     return EXIT_SUCCESS;
 }
@@ -131,7 +126,7 @@ void demo2() {
 }
 void task1() {
     // Получаем изображение.
-    Mat source_img = get_image_source( IMREAD_COLOR, "../imgs/img3.png" );
+    Mat source_img = get_image_source( IMREAD_COLOR, "../../imgs/img3.png" );
     // Хранение чб изображения.
     Mat gray_img;
     // Хранение YCC формата изображения.
@@ -173,7 +168,7 @@ void task2() {
     float range[] = { 0, 255 };
     const float *ranges[] = { range };
     int chnls[] = { 0 };
-    VideoCapture cap( "../imgs/highway_traffic720.mp4" );
+    VideoCapture cap( "../../imgs/highway_traffic720.mp4" );
 
     if ( !cap.isOpened() )  // isOpened() returns true if capturing has been initialized.
     {
@@ -224,7 +219,7 @@ void task2() {
     }
 }
 void task3() {
-    Mat img = get_image_source( IMREAD_COLOR, "../imgs/img2.jpeg" );
+    Mat img = get_image_source( IMREAD_COLOR, "../../imgs/img2.jpeg" );
     Mat ycc;
     cvtColor( img, ycc, COLOR_BGR2YCrCb );
     MatND hist;
@@ -252,7 +247,7 @@ void task3() {
     press_esc_to_close( 0 );
 }
 void task4() {
-    Mat img = get_image_source( IMREAD_COLOR, "../imgs/cosmic.jpeg" );
+    Mat img = get_image_source( IMREAD_COLOR, "../../imgs/cosmic.jpeg" );
     Mat ycc;
     cvtColor( img, ycc, COLOR_BGR2YCrCb );
     MatND hist;

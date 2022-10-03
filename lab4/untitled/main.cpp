@@ -78,13 +78,13 @@ void apply_border_filter( cv::Mat source_img, char border_size )
 
     cv::copyMakeBorder( source_img, dst,
                         border_size, border_size, border_size, border_size,
-                        cv::BORDER_CONSTANT, cv::Scalar(250) );
+                        cv::BORDER_REFLECT, cv::Scalar(250) );
     cv::copyMakeBorder( source_img, dst2,
                         border_size, border_size, border_size, border_size,
                         cv::BORDER_WRAP, cv::Scalar(250) );
 
     imshow_with_text( source_img, "original" );
-    imshow_with_text( dst, cv::format("BORDER_CONSTANT|border_size = %d", border_size) );
+    imshow_with_text( dst, cv::format("BORDER_REFLECT|border_size = %d", border_size) );
     imshow_with_text( dst2, cv::format("BORDER_WRAP|border_size = %d", border_size) );
 
     press_esc_to_close( 0 );

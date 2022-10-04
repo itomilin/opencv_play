@@ -56,10 +56,20 @@ int main()
     cvui::init(SETTINGS_NAME);
 
     bool useReplace = true;
+
+    bool green_black_replace = false;
+    bool white_replace      = false;
+
     // lowe 0 0 50 green |dark || 180 90 70 - white
     // upper 80 100 215 green|dark || 255 255 255 - white
     uint8_t lowerBound[3]{ 0, 0, 50 };
     uint8_t upperBound[3]{ 80, 100, 215 };
+
+    uint8_t lower_bound_white[3]{ 160, 170, 0 };
+    uint8_t upper_bound_white[3]{ 255, 255, 255 };
+
+    uint8_t lower_bound_black_green[3]{ 0, 0, 50 };
+    uint8_t upper_bound_black_green[3]{ 80, 100, 215 };
 
 //    yellow_lower = np.array([20, 100, 100])
 //       yellow_upper = np.array([30, 255, 255])
@@ -71,16 +81,16 @@ int main()
         /***************Settings window draw*******************/
         cvui::window(settingsFrame, 0, 0, 200, 475, "Pixel Replacing");
 
-        cvui::checkbox(settingsFrame, 0, 25, "Use Replace",
-                       &useReplace);
-        if (!replacer.data) {
-            cvui::text(settingsFrame, 100, 27, "Needs picture", 0.4,
-                       0xFFCEFF);
+        cvui::checkbox( settingsFrame, 0, 25, "Use Replace", &useReplace );
+        cvui::checkbox( settingsFrame, 0, 25 * 2, "white_color_replace", &white_replace );
+        cvui::checkbox( settingsFrame, 0, 25 * 3, "dark_color_replace", &green_black_replace );
+        if ( !replacer.data ) {
+            cvui::text( settingsFrame, 100, 27, "Needs picture", 0.4, 0xFFCEFF );
             useReplace = false;
         }
         // Button for open file dialog
 
-        std::string fileName = "../../imgs/img2.jpeg";
+        std::string fileName = "../../imgs/red_wall.jpeg";
         // This realization works only with pictures, not video
         replacer = cv::imread(fileName);
         if (!replacer.data) {
@@ -94,31 +104,45 @@ int main()
         int trackBarsY = 95;
         cvui::window(settingsFrame, 0, trackBarsY, 200, 190, "Lower bound");
         cvui::text(settingsFrame, 10, trackBarsY + 50, "b");
-        cvui::trackbar<uint8_t>(settingsFrame, 20, trackBarsY + 35, 165,
-                                &lowerBound[0], 0, 255);
+        cvui::trackbar<uint8_t>(settingsFrame, 20, trackBarsY + 35, 165, &lowerBound[0], 0, 255);
         cvui::text(settingsFrame, 10, trackBarsY + 100, "g");
-        cvui::trackbar<uint8_t>(settingsFrame, 20, trackBarsY + 85, 165,
-                                &lowerBound[1], 0, 255);
+        cvui::trackbar<uint8_t>(settingsFrame, 20, trackBarsY + 85, 165, &lowerBound[1], 0, 255);
         cvui::text(settingsFrame, 10, trackBarsY + 150, "r");
-        cvui::trackbar<uint8_t>(settingsFrame, 20, trackBarsY + 135,
-                                165, &lowerBound[2], 0, 255);
-        cvui::window(settingsFrame, 0, trackBarsY + 190, 200, 190,
-                     "Upper bound");
+        cvui::trackbar<uint8_t>(settingsFrame, 20, trackBarsY + 135, 165, &lowerBound[2], 0, 255);
+        //
+        cvui::window(settingsFrame, 0, trackBarsY + 190, 200, 190, "Upper bound");
         cvui::text(settingsFrame, 10, trackBarsY + 240, "b");
-        cvui::trackbar<uint8_t>(settingsFrame, 20, trackBarsY + 225,
-                                165, &upperBound[0], 0, 255);
+        cvui::trackbar<uint8_t>(settingsFrame, 20, trackBarsY + 225, 165, &upperBound[0], 0, 255);
         cvui::text(settingsFrame, 10, trackBarsY + 290, "g");
-        cvui::trackbar<uint8_t>(settingsFrame, 20, trackBarsY + 275,
-                                165, &upperBound[1], 0, 255);
+        cvui::trackbar<uint8_t>(settingsFrame, 20, trackBarsY + 275, 165, &upperBound[1], 0, 255);
         cvui::text(settingsFrame, 10, trackBarsY + 340, "r");
-        cvui::trackbar<uint8_t>(settingsFrame, 20, trackBarsY + 325,
-                                165, &upperBound[2], 0, 255);
+        cvui::trackbar<uint8_t>(settingsFrame, 20, trackBarsY + 325, 165, &upperBound[2], 0, 255);
+        //
+        if ( white_replace ) {
+            replacePixels( replacer, cameraFrame, lower_bound_white, upper_bound_white);
+            cvui::trackbar<uint8_t>(settingsFrame, 20, trackBarsY + 35, 165, &lower_bound_white[0], 0, 255);
+            cvui::trackbar<uint8_t>(settingsFrame, 20, trackBarsY + 85, 165, &lower_bound_white[1], 0, 255);
+            cvui::trackbar<uint8_t>(settingsFrame, 20, trackBarsY + 135, 165, &lower_bound_white[2], 0, 255);
+            cvui::trackbar<uint8_t>(settingsFrame, 20, trackBarsY + 225, 165, &upper_bound_white[0], 0, 255);
+            cvui::trackbar<uint8_t>(settingsFrame, 20, trackBarsY + 275, 165, &upper_bound_white[1], 0, 255);
+            cvui::trackbar<uint8_t>(settingsFrame, 20, trackBarsY + 325, 165, &upper_bound_white[2], 0, 255);
+        }
+
+        if ( green_black_replace ) {
+            replacePixels( replacer, cameraFrame, lower_bound_black_green, upper_bound_black_green);
+            cvui::trackbar<uint8_t>(settingsFrame, 20, trackBarsY + 35, 165, &lower_bound_black_green[0], 0, 255);
+            cvui::trackbar<uint8_t>(settingsFrame, 20, trackBarsY + 85, 165, &lower_bound_black_green[1], 0, 255);
+            cvui::trackbar<uint8_t>(settingsFrame, 20, trackBarsY + 135, 165, &lower_bound_black_green[2], 0, 255);
+            cvui::trackbar<uint8_t>(settingsFrame, 20, trackBarsY + 225, 165, &upper_bound_black_green[0], 0, 255);
+            cvui::trackbar<uint8_t>(settingsFrame, 20, trackBarsY + 275, 165, &upper_bound_black_green[1], 0, 255);
+            cvui::trackbar<uint8_t>(settingsFrame, 20, trackBarsY + 325, 165, &upper_bound_black_green[2], 0, 255);
+        }
+        //
         cvui::update();
         cv::imshow(SETTINGS_NAME, settingsFrame);
         /*******************************************************/
         if (useReplace) {
-            replacePixels(replacer, cameraFrame, lowerBound,
-                          upperBound);
+            replacePixels( replacer, cameraFrame, lowerBound, upperBound );
         }
         cv::imshow(MODIFIED_NAME, cameraFrame);
 

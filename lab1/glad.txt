@@ -1,0 +1,51 @@
+###
+
+array/set 1 512
+wavelength 1 1.06
+units/field 1 16
+
+clap/cir/con 1 5.
+focallength = 100
+
+
+lens 1 focallength
+
+
+set/window/rel 30 70 30 70 # границы
+title init_distribution
+plot/bitmap/intensity/paintiso 1; pause # график интенсивости
+plot/bitmap/intensity/contpaintiso 1; pause # график на плоскости
+plot/bitmap/intensity/wireiso 1; pause # интенсивность в виде сетки
+
+prop 50 # шаг 50см
+title at 50 cm ( 50_from_focus )
+plot/bitmap/intensity/paintiso 1; pause # приближение к точке фокуса линзы
+
+prop 49 # добавляем еще один шаг, становимся на 1 см от фокуса
+title at 99 cm (1_from_focus)
+plot/bitmap/intensity/paintiso 1; pause
+
+prop 1 # добавляем еще один шаг, теперь находимся в фокусе
+set/win/rel 48 52 48 52
+title at paraxial focus
+plot/bitmap/intensity/paintiso 1; pause # представление в фокусе
+plot/contour/intensity 1; pause # контурное представление в фокусе
+
+# scatter(dispersion) beam
+prop 100
+set/win/rel 30 70 30 70
+title at 200 cm (100_after_focus)
+plot/bitmap/intensity/contpaintiso 1; pause # as start	
+
+c reverse fr
+lens 1 focallength # уставливаем линзу, чтобы собрать изображение обратно
+
+prop 100
+title at 300 cm ( 200_after_focus)
+plot/bitmap/intensity/paintiso 1; pause # not all image make up after dispersion
+mirror/flat 1
+plot/bitmap/intensity/paintiso 1; pause
+
+c prop 2
+c title after mirror
+c plot/bitmap/intensity/paintiso 1; pause

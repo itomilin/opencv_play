@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+
+set -e
+
+input_file=$1
+output_file=$2
+
+if [[ -z $input_file ]]; then
+    echo "No such input file."
+    exit 1
+fi
+
+if [[ -z $output_file ]]; then
+    echo "Set name for output file."
+    exit 1
+fi
+
+# Generate transforms.trf
+ffmpeg -i $input_file \
+       -vf vidstabdetect=shakiness=5 \
+       -f null -
+echo "<<<< GENERATED_TRANSFORMS_FILE >>>>"
+
+ffmpeg -i $input_file \
+       -vf vidstabtransform=smoothing=15:zoom=7:input="transforms.trf" \
+       "${output_file}.mp4"
+echo "<<<< GENERATED_STABILIZATED_VIDEO >>>>"
+
+ffmpeg -i $input_file \
+       -i "${output_file}.mp4" \
+       -filter_complex "[0:v:0]pad=iw*2:ih[bg]; [bg][1:v:0]overlay=w" \
+       sidebyside.mp4
+echo "<<<< GENERATED_SIDEBYSIDE >>>>"
+
+# ffplay -an <file_name>
+

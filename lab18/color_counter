@@ -1,0 +1,60 @@
+#!/usr/bin/env python3
+
+import cv2
+import numpy as np
+import sys
+
+if len(sys.argv) < 2:
+    print( "Set first argument (image path)" )
+    sys.exit( 1 )
+
+img = cv2.imread( sys.argv[1] )
+hsv = cv2.cvtColor( img, cv2.COLOR_BGR2HSV )
+
+## minimum value of brown pixel in BGR order -> burleywood
+#BROWN_MIN = np.array([135, 184, 222], np.uint8)
+## maximum value of brown pixel in BGR order -> brown
+#BROWN_MAX = np.array([42, 42, 65], np.uint8)
+#
+#RED_MIN = np.array([0, 0, 255], np.uint8)
+#RED_MAX = np.array([125, 125, 255], np.uint8)
+#
+#BLUE_MIN = np.array([250, 206, 134], np.uint8)
+#BLUE_MAX = np.array([180, 250, 250], np.uint8)
+#
+#dst = cv2.inRange(img, BROWN_MIN, BROWN_MAX)
+#num_brown = cv2.countNonZero(dst)
+#
+#dst_red = cv2.inRange(img, RED_MIN, RED_MAX)
+#num_red = cv2.countNonZero(dst_red)
+#
+#dst_blue = cv2.inRange(img, BLUE_MIN, BLUE_MAX)
+#num_blue = cv2.countNonZero(dst_blue)
+#
+#ORANGE_MIN = np.array([5, 50, 50],np.uint8)
+#ORANGE_MAX = np.array([15, 255, 255],np.uint8)
+#
+#dst_orange = cv2.inRange(img, ORANGE_MIN, ORANGE_MAX)
+#num_orange = cv2.countNonZero(dst_orange)
+
+lower = np.array([0, 164, 0])
+upper = np.array([179, 255, 255])
+mask = cv2.inRange( hsv, lower, upper )
+result = cv2.bitwise_and(img, img, mask=mask)
+
+height, width = img.shape[:2]
+
+print(f'Image resolution: {width}x{height}\nCount of pixels: {width*height}')
+#print('The number of brown pixels is: ' + str(num_brown))
+#print('The number of red pixels is: ' + str(num_red))
+#print('The number of blue pixels is: ' + str(num_blue))
+#print('The number of orange pixels is: ' + str(num_orange))
+
+cv2.imshow("bgr_img", img)
+cv2.imshow("hsv_img", result)
+
+while True:
+    if cv2.waitKey( 0 ) == 27:
+       cv2.destroyAllWindows()
+       break
+

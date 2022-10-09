@@ -1,3 +1,4 @@
 **/build-*
 test*
 CMakeLists.txt.user
+imgs/*~

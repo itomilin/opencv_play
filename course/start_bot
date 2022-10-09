@@ -1,0 +1,68 @@
+#!/usr/bin/env python3
+# https://telepot.readthedocs.io/en/latest/reference.html
+
+import sys
+import os
+import time
+
+import telepot
+from telepot.loop import MessageLoop
+from pprint import pprint
+
+from number_recognition import number_recognition
+from background_remover import change_background
+
+BOT_TOKEN = os.environ['OPENCV_BOT_TOKEN']
+CHAT_ID   = int( os.environ['OPENCV_BOT_CHAT_ID'] )
+
+def handle( msg ):
+    content_type, chat_type, chat_id = telepot.glance( msg )
+    if content_type == 'photo':
+        case = msg['caption']
+        try:
+            pprint( msg['caption'] )
+        except KeyError:
+            print( "Set caption for message!" )
+            return
+
+        img_path = f"./chat_files/{msg['photo'][-1]['file_unique_id']}.png"
+        _, file_name = os.path.split( img_path )
+
+        bot.download_file( msg['photo'][-1]['file_id'], img_path )
+
+        if case == "number":
+            text_number, status = number_recognition( img_path )
+            if status:
+                bot.sendPhoto( CHAT_ID,
+                               photo=open( f"./processed_files/{file_name}", 'rb'),
+                               caption=f'recognized_num: {text_number}')
+            else:
+                bot.sendMessage( CHAT_ID, f'recognized_num: {text_number}' )
+        elif case == "background":
+            change_background( img_path )
+            bot.sendVideo( CHAT_ID,
+                           video=open(f"./processed_files/{file_name.split('.')[0]}.mp4", 'rb'),
+                           caption=f'processed_video:')
+        else:
+            print( "Wrong case, try again!" )
+            return
+
+        print( "!!processing done!!" )
+
+    elif content_type == 'video':
+        pass
+    elif content_type == 'text':
+        pass
+    else:
+        print( "Type is not handled" )
+
+
+bot = telepot.Bot( BOT_TOKEN )
+MessageLoop( bot, handle ).run_as_thread()
+
+print( "Usage:\nSend image to chat with caption 'number' or 'background'" )
+
+# Keep the program running.
+while True:
+    time.sleep( 1200 )
+

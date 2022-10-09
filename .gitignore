@@ -2,3 +2,6 @@
 test*
 CMakeLists.txt.user
 imgs/*~
+course/chat_files/*
+course/processed_files/*
+**/__pycache__

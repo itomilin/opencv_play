@@ -12,17 +12,25 @@ from pprint import pprint
 from number_recognition import number_recognition
 from background_remover import change_background
 
+
 BOT_TOKEN = os.environ['OPENCV_BOT_TOKEN']
 CHAT_ID   = int( os.environ['OPENCV_BOT_CHAT_ID'] )
+
+def usage():
+    return "Usage:\nSend image to chat with caption 'number' or 'background'"
+
 
 def handle( msg ):
     content_type, chat_type, chat_id = telepot.glance( msg )
     if content_type == 'photo':
-        case = msg['caption']
+        case = None
         try:
+            case = msg['caption']
             pprint( msg['caption'] )
         except KeyError:
-            print( "Set caption for message!" )
+            err_msg = f"[ERROR] Set caption for message!\n{usage()}"
+            print( err_msg )
+            bot.sendMessage( CHAT_ID, err_msg )
             return
 
         img_path = f"./chat_files/{msg['photo'][-1]['file_unique_id']}.png"
@@ -60,7 +68,7 @@ def handle( msg ):
 bot = telepot.Bot( BOT_TOKEN )
 MessageLoop( bot, handle ).run_as_thread()
 
-print( "Usage:\nSend image to chat with caption 'number' or 'background'" )
+print( usage() )
 
 # Keep the program running.
 while True:

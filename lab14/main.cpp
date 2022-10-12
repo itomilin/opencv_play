@@ -18,7 +18,15 @@ void cpu_median_blur( cv::Mat& src, cv::Mat& dst, const int kernel )
 
 int main()
 {
-    auto constexpr kernel = 31;
+    auto constexpr kernel = 19;
+
+#ifdef GPU
+    auto constexpr info = "(GPU_MODE) REAL FPS: ";
+#endif
+
+#ifdef CPU
+    auto constexpr info = "(CPU_MODE) REAL FPS: ";
+#endif
 
 #ifdef GPU
     cv::cuda::setDevice( 0 );
@@ -40,7 +48,7 @@ int main()
     // Exit if video is not opened
     if( !video.isOpened() )
     {
-    std::cout << "Could not read video file." << std::endl;
+        std::cout << "Could not read video file." << std::endl;
         return EXIT_FAILURE;
     }
 
@@ -50,16 +58,15 @@ int main()
     {
         video >> frame;
 
-    cv::cvtColor( frame, frame_grayscale, cv::COLOR_BGR2GRAY );
+        cv::cvtColor( frame, frame_grayscale, cv::COLOR_BGR2GRAY );
 
         // Start timer
         double start = (double)cv::getTickCount();
 
-
 #ifdef GPU
-    src_cuda.upload( frame_grayscale );
-    gpu_median_blur( src_cuda, dst_cuda, kernel );
-    dst_cuda.download( result_frame );
+        src_cuda.upload( frame_grayscale );
+        gpu_median_blur( src_cuda, dst_cuda, kernel );
+        dst_cuda.download( result_frame );
 #endif
 
 #ifdef CPU
@@ -69,19 +76,16 @@ int main()
         // Calculate Frames per second (FPS)
         float fps = cv::getTickFrequency() / (cv::getTickCount() - start);
 
+        // Display FPS on frame
+        cv::putText( result_frame, info + std::to_string(int(fps)),
+                     cv::Point(100, 30), cv::FONT_HERSHEY_SIMPLEX, 1.1,
+                     cv::Scalar( 0, 0, 255), 4 );
 
-    std::cout << "FPS: " << std::to_string( int(fps) ) << std::endl;
-    // Display FPS on frame
-    //cv::putText( frame, "REAL_FPS : " + std::to_string(int(fps)),
-    //cv::Point(100, 30), cv::FONT_HERSHEY_SIMPLEX, 1.1,
-    //cv::Scalar( 0, 0, 255), 4 );
-
-    // Display frame.
-    //cv::imshow( "Tracking", result_frame );
+        // Display frame.
+        cv::imshow( "Tracking", result_frame );
 
     } while( !frame.empty() && cv::waitKey( 1000.0 / cap_fps ) != 27 );
 
     return EXIT_SUCCESS;
 }
-
 

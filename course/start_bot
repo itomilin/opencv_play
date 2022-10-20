@@ -64,7 +64,6 @@ def handle( msg ):
     else:
         print( "Type is not handled" )
 
-
 bot = telepot.Bot( BOT_TOKEN )
 MessageLoop( bot, handle ).run_as_thread()
 

@@ -172,7 +172,7 @@ int main(int argc, char* argv[])
             color_indexes;
 
     // получаем картинку
-    image = get_image_source( cv::IMREAD_COLOR, "../../imgs/green_wall.png" );
+    image = get_image_source( cv::IMREAD_COLOR, "../../imgs/red_wall.jpeg" );
 
     //    cvShowImage("image", image);
     // преобразуем изображение в HSV

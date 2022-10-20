@@ -7,7 +7,7 @@ import cv2 as cv
 
 import sys
 
-VIDEO_SOURCE = "../imgs/traffic_ip_camera.mp4"
+VIDEO_SOURCE = "../imgs/traffic.mp4"
 
 def meta_info( cap ):
     fps = cap.get(cv.CAP_PROP_FPS)      # OpenCV v2.x used "CV_CAP_PROP_FPS"
